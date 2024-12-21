@@ -40,13 +40,13 @@ function ThemedLayout({ children }: { children: React.ReactNode }) {
       {/* Theme Toggle, top-right */}
       <button
         onClick={toggleTheme}
-        className="absolute right-4 top-4 rounded-full p-2 transition hover:bg-white/10"
+        className="fixed right-4 top-4 rounded-full p-2 transition hover:bg-white/10 sm:absolute"
         aria-label={isDayMode ? "Switch to night mode" : "Switch to day mode"}
       >
         {isDayMode ? (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="h-6 w-6 sm:h-5 sm:w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
@@ -55,7 +55,7 @@ function ThemedLayout({ children }: { children: React.ReactNode }) {
         ) : (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
+            className="h-6 w-6 sm:h-5 sm:w-5"
             viewBox="0 0 20 20"
             fill="currentColor"
           >
