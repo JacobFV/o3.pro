@@ -38,7 +38,7 @@ export const bids = createTable("bid", {
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
   usage: text("usage"),
-  amount: numeric("amount", { precision: 18, scale: 2 }).default(0).notNull(),
+  amount: numeric("amount", { precision: 18, scale: 2 }).default("0").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),

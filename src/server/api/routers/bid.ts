@@ -31,7 +31,7 @@ export const bidRouter = createTRPCRouter({
       const currentMax = await ctx.db.query.bids.findFirst({
         orderBy: (table, { desc }) => [desc(table.amount)],
       });
-      const base = currentMax?.amount ?? 0;
+      const base = (currentMax?.amount ?? 0) as number;
 
       // Compute the new bid based on user selection
       let newAmount = base;
@@ -47,8 +47,8 @@ export const bidRouter = createTRPCRouter({
       await ctx.db.insert(bids).values({
         name: input.name,
         email: input.email,
-        usage: input.usage ?? null,
-        amount: newAmount,
+        usage: input.usage ?? "",
+        amount: newAmount.toString(),
       });
     }),
 
