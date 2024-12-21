@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "~/trpc/react";
 import FishCanvas from "./_components/FishCanvas";
+import { useThemeMode } from "~/contexts/ThemeContext";
 
 /**
  * Home Page:
@@ -11,6 +12,7 @@ import FishCanvas from "./_components/FishCanvas";
  *   If usage is provided, we also create a Post in the background.
  */
 export default function Home() {
+  const { isDayMode } = useThemeMode();
   // Local Form State
   const [hasBid, setHasBid] = useState(false);
   const [bidOption, setBidOption] = useState("");
@@ -95,32 +97,72 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-950/30 to-blue-900/30 p-8 font-sans text-white">
-      {/* Updated background with FishCanvas */}
+    <main
+      className={`relative min-h-screen overflow-hidden p-8 font-sans ${
+        isDayMode
+          ? "bg-gradient-to-br from-blue-100 to-blue-50"
+          : "bg-gradient-to-br from-blue-950 to-blue-900"
+      }`}
+    >
+      {/* Background layers */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-sky-400/10 via-sky-600/15 to-blue-900/25 mix-blend-overlay" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(56,189,248,0.15),rgba(3,105,161,0.1))]" />
+        <div
+          className={`absolute inset-0 mix-blend-overlay ${
+            isDayMode
+              ? "bg-gradient-to-b from-sky-200/30 via-sky-300/20 to-blue-200/25"
+              : "bg-gradient-to-b from-sky-950/50 via-sky-900/30 to-blue-950/40"
+          }`}
+        />
+        <div
+          className={`absolute inset-0 ${
+            isDayMode
+              ? "bg-[radial-gradient(circle_at_50%_120%,rgba(56,189,248,0.1),rgba(3,105,161,0.05))]"
+              : "bg-[radial-gradient(circle_at_50%_120%,rgba(56,189,248,0.05),rgba(3,105,161,0.2))]"
+          }`}
+        />
         <FishCanvas />
       </div>
 
       {/* Content Grid */}
       <div className="relative mx-auto grid max-w-5xl grid-cols-1 items-start gap-8 md:grid-cols-2">
         {/* Left Column */}
-        <div className="flex flex-col justify-start gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-8 shadow-2xl backdrop-blur-xl transition-all">
-          <h1 className="mb-6 bg-gradient-to-r from-white to-white/80 bg-clip-text text-left text-5xl font-extrabold tracking-tight text-transparent drop-shadow-lg">
+        <div
+          className={`flex flex-col justify-start gap-6 rounded-2xl border p-8 shadow-2xl backdrop-blur-xl transition-all ${
+            isDayMode
+              ? "border-black/5 bg-white/40"
+              : "border-white/5 bg-white/[0.02]"
+          }`}
+        >
+          <h1
+            className={`mb-6 bg-clip-text text-left text-5xl font-extrabold tracking-tight text-transparent drop-shadow-lg ${
+              isDayMode
+                ? "bg-gradient-to-r from-blue-900 to-blue-800"
+                : "bg-gradient-to-r from-white to-white/80"
+            }`}
+          >
             o3.pro is for sale
           </h1>
-          <p className="text-2xl font-medium italic">
+          <p
+            className={`text-2xl font-medium italic ${isDayMode ? "text-blue-900" : "text-white"}`}
+          >
             Current Price:{" "}
             <span className="font-bold not-italic">
               ${maxBid !== undefined ? maxBid.toLocaleString() : "XX,XXX"}
             </span>
           </p>
-          <p className="text-lg font-light">
+          <p
+            className={`text-lg font-light ${isDayMode ? "text-blue-900" : "text-white"}`}
+          >
             Countdown to January&nbsp;1,&nbsp;2025:{" "}
-            <em className="font-normal text-blue-100/90">{timeRemaining}</em>
+            <em
+              className={`font-normal ${isDayMode ? "text-blue-800" : "text-blue-100/90"}`}
+            >
+              {timeRemaining}
+            </em>
           </p>
-          <p className="text-sm text-white/80">
+          <p
+            className={`text-sm ${isDayMode ? "text-blue-900/80" : "text-white/80"}`}
+          >
             At midnight (ET) on Jan&nbsp;1, o3.pro will go to the highest bidder
             or the first to pay 100k.
           </p>
@@ -131,11 +173,19 @@ export default function Home() {
           {!hasBid ? (
             <form
               onSubmit={handleSubmit}
-              className="flex w-full max-w-md flex-col gap-6 rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-xl transition-all"
+              className={`flex w-full max-w-md flex-col gap-6 rounded-2xl border p-8 shadow-2xl backdrop-blur-xl transition-all ${
+                isDayMode
+                  ? "border-black/5 bg-white/40"
+                  : "border-white/5 bg-white/[0.02]"
+              }`}
             >
               {/* Name */}
               <div>
-                <label className="mb-1 block text-sm font-semibold tracking-wide text-gray-300">
+                <label
+                  className={`mb-1 block text-sm font-semibold tracking-wide ${
+                    isDayMode ? "text-blue-900" : "text-gray-300"
+                  }`}
+                >
                   Name
                 </label>
                 <input
@@ -144,14 +194,22 @@ export default function Home() {
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, name: e.target.value }))
                   }
-                  className="w-full rounded-lg border border-white/10 bg-white/10 px-4 py-2.5 text-white placeholder-white/50 backdrop-blur-sm transition duration-200 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-0"
+                  className={`w-full rounded-lg border px-4 py-2.5 transition duration-200 focus:outline-none focus:ring-0 ${
+                    isDayMode
+                      ? "border-black/10 bg-white/50 text-blue-900 placeholder-blue-900/50 focus:border-blue-500/20 focus:bg-white/60"
+                      : "border-white/10 bg-black/20 text-white placeholder-white/30 focus:border-white/20 focus:bg-black/30"
+                  }`}
                   required
                 />
               </div>
 
               {/* Email */}
               <div>
-                <label className="mb-1 block text-sm font-semibold tracking-wide text-gray-300">
+                <label
+                  className={`mb-1 block text-sm font-semibold tracking-wide ${
+                    isDayMode ? "text-blue-900" : "text-gray-300"
+                  }`}
+                >
                   Email
                 </label>
                 <input
@@ -160,34 +218,54 @@ export default function Home() {
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, email: e.target.value }))
                   }
-                  className="w-full rounded-lg border border-white/10 bg-white/10 px-4 py-2.5 text-white placeholder-white/50 backdrop-blur-sm transition duration-200 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-0"
+                  className={`w-full rounded-lg border px-4 py-2.5 transition duration-200 focus:outline-none focus:ring-0 ${
+                    isDayMode
+                      ? "border-black/10 bg-white/50 text-blue-900 placeholder-blue-900/50 focus:border-blue-500/20 focus:bg-white/60"
+                      : "border-white/10 bg-black/20 text-white placeholder-white/30 focus:border-white/20 focus:bg-black/30"
+                  }`}
                   required
                 />
               </div>
 
               {/* Usage */}
               <div>
-                <label className="mb-1 block text-sm font-semibold tracking-wide text-gray-300">
+                <label
+                  className={`mb-1 block text-sm font-semibold tracking-wide ${
+                    isDayMode ? "text-blue-900" : "text-gray-300"
+                  }`}
+                >
                   What will you use o3.pro for? (optional)
                 </label>
                 <textarea
                   value={usage}
                   onChange={(e) => setUsage(e.target.value)}
-                  className="h-24 w-full rounded-lg border border-white/10 bg-white/10 px-4 py-2.5 text-white placeholder-white/50 backdrop-blur-sm transition duration-200 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-0"
+                  className={`h-24 w-full rounded-lg border px-4 py-2.5 transition duration-200 focus:outline-none focus:ring-0 ${
+                    isDayMode
+                      ? "border-black/10 bg-white/50 text-blue-900 placeholder-blue-900/50 focus:border-blue-500/20 focus:bg-white/60"
+                      : "border-white/10 bg-black/20 text-white placeholder-white/30 focus:border-white/20 focus:bg-black/30"
+                  }`}
                 />
               </div>
 
               {/* Bid Options - fancier radio buttons */}
               <div className="flex flex-col gap-2">
-                <span className="text-sm font-semibold tracking-wide text-gray-300">
+                <span
+                  className={`text-sm font-semibold tracking-wide ${
+                    isDayMode ? "text-blue-900" : "text-gray-300"
+                  }`}
+                >
                   Bid Options
                 </span>
                 <div className="flex items-center gap-2">
                   <label
                     className={`cursor-pointer rounded-full border-2 px-3 py-1 transition-colors ${
                       bidOption === "5%"
-                        ? "border-blue-400 bg-blue-400/10 text-blue-300"
-                        : "border-white/20 text-white/70 hover:bg-white/10"
+                        ? isDayMode
+                          ? "border-blue-600 bg-blue-100 text-blue-800"
+                          : "border-blue-400 bg-blue-400/10 text-blue-300"
+                        : isDayMode
+                          ? "border-blue-900/20 text-blue-900/70 hover:bg-blue-50"
+                          : "border-white/20 text-white/70 hover:bg-white/10"
                     }`}
                   >
                     <input
@@ -204,8 +282,12 @@ export default function Home() {
                   <label
                     className={`cursor-pointer rounded-full border-2 px-3 py-1 transition-colors ${
                       bidOption === "10%"
-                        ? "border-blue-400 bg-blue-400/10 text-blue-300"
-                        : "border-white/20 text-white/70 hover:bg-white/10"
+                        ? isDayMode
+                          ? "border-blue-600 bg-blue-100 text-blue-800"
+                          : "border-blue-400 bg-blue-400/10 text-blue-300"
+                        : isDayMode
+                          ? "border-blue-900/20 text-blue-900/70 hover:bg-blue-50"
+                          : "border-white/20 text-white/70 hover:bg-white/10"
                     }`}
                   >
                     <input
@@ -218,12 +300,15 @@ export default function Home() {
                     />
                     10% more
                   </label>
-
                   <label
                     className={`cursor-pointer rounded-full border-2 px-3 py-1 transition-colors ${
                       bidOption === "custom"
-                        ? "border-blue-400 bg-blue-400/10 text-blue-300"
-                        : "border-white/20 text-white/70 hover:bg-white/10"
+                        ? isDayMode
+                          ? "border-blue-600 bg-blue-100 text-blue-800"
+                          : "border-blue-400 bg-blue-400/10 text-blue-300"
+                        : isDayMode
+                          ? "border-blue-900/20 text-blue-900/70 hover:bg-blue-50"
+                          : "border-white/20 text-white/70 hover:bg-white/10"
                     }`}
                   >
                     <input
@@ -244,7 +329,11 @@ export default function Home() {
                     placeholder="Enter custom amount"
                     value={customBid}
                     onChange={(e) => setCustomBid(e.target.value)}
-                    className="mt-2 w-full rounded-lg border border-white/10 bg-white/10 px-4 py-2.5 text-white placeholder-white/50 backdrop-blur-sm transition duration-200 focus:border-white/20 focus:bg-white/15 focus:outline-none focus:ring-0"
+                    className={`mt-2 w-full rounded-lg border px-4 py-2.5 transition duration-200 focus:outline-none focus:ring-0 ${
+                      isDayMode
+                        ? "border-black/10 bg-white/50 text-blue-900 placeholder-blue-900/50 focus:border-blue-500/20 focus:bg-white/60"
+                        : "border-white/10 bg-black/20 text-white placeholder-white/30 focus:border-white/20 focus:bg-black/30"
+                    }`}
                   />
                 )}
               </div>
@@ -258,17 +347,29 @@ export default function Home() {
               </button>
             </form>
           ) : (
-            <div className="w-full max-w-md space-y-4 rounded-2xl border border-white/10 bg-white/5 p-8 text-center shadow-2xl backdrop-blur-xl transition-all">
-              <p className="text-lg font-semibold">
+            <div
+              className={`w-full max-w-md space-y-4 rounded-2xl border p-8 text-center shadow-2xl backdrop-blur-xl transition-all ${
+                isDayMode
+                  ? "border-black/5 bg-white/40"
+                  : "border-white/5 bg-white/[0.02]"
+              }`}
+            >
+              <p
+                className={`text-lg font-semibold ${isDayMode ? "text-blue-900" : "text-white"}`}
+              >
                 Thank you, {formData.name}! You’ve placed a bid:
               </p>
-              <p className="mt-1 text-base font-light">
+              <p
+                className={`mt-1 text-base font-light ${isDayMode ? "text-blue-900" : "text-white"}`}
+              >
                 {bidOption === "custom"
                   ? `Custom amount: $${customBid}`
                   : `Bid ${bidOption} more`}
               </p>
               {usage && !isEditingUsage && (
-                <p className="mt-2 text-sm text-gray-200">
+                <p
+                  className={`mt-2 text-sm ${isDayMode ? "text-blue-900" : "text-white"}`}
+                >
                   You plan to use o3.pro for:
                   <em> {usage}</em>
                 </p>
@@ -276,13 +377,21 @@ export default function Home() {
 
               {isEditingUsage ? (
                 <div className="flex flex-col items-start gap-2">
-                  <label className="block text-left text-sm font-semibold tracking-wide text-gray-300">
+                  <label
+                    className={`block text-left text-sm font-semibold tracking-wide ${
+                      isDayMode ? "text-blue-900" : "text-gray-300"
+                    }`}
+                  >
                     Update your usage
                   </label>
                   <textarea
                     value={localUsage}
                     onChange={(e) => setLocalUsage(e.target.value)}
-                    className="h-24 w-full rounded-lg border border-white/10 bg-white/10 px-4 py-2.5 text-white placeholder-white/50 backdrop-blur-sm focus:border-white/20 focus:bg-white/15 focus:outline-none"
+                    className={`h-24 w-full rounded-lg border px-4 py-2.5 transition duration-200 focus:outline-none focus:ring-0 ${
+                      isDayMode
+                        ? "border-black/10 bg-white/50 text-blue-900 placeholder-blue-900/50 focus:border-blue-500/20 focus:bg-white/60"
+                        : "border-white/10 bg-black/20 text-white placeholder-white/30 focus:border-white/20 focus:bg-black/30"
+                    }`}
                   />
                   <div className="flex w-full justify-end gap-2">
                     <button
