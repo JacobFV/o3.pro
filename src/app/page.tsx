@@ -14,9 +14,9 @@ import { useThemeMode } from "~/contexts/ThemeContext";
 export default function Home() {
   const { isDayMode } = useThemeMode();
   // Local Form State
-  const [hasBid, setHasBid] = useState(false);
-  const [bidOption, setBidOption] = useState("");
-  const [customBid, setCustomBid] = useState("");
+  const [hasOffer, setHasOffer] = useState(false);
+  const [offerOption, setOfferOption] = useState("");
+  const [customOffer, setCustomOffer] = useState("");
   const [usage, setUsage] = useState("");
   const [formData, setFormData] = useState({ name: "", email: "" });
 
@@ -56,12 +56,12 @@ export default function Home() {
   }, []);
 
   // Query the server for the current highest bid
-  const { data: maxBid } = api.bid.getMax.useQuery();
+  const { data: maxOffer } = api.bid.getMax.useQuery();
 
   // Mutation to create a new bid
-  const createBid = api.bid.create.useMutation({
+  const createOffer = api.bid.create.useMutation({
     onSuccess: () => {
-      setHasBid(true);
+      setHasOffer(true);
     },
   });
 
@@ -74,12 +74,12 @@ export default function Home() {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    createBid.mutate({
+    createOffer.mutate({
       name: formData.name,
       email: formData.email,
       usage,
-      bidOption,
-      customBid,
+      bidOption: offerOption,
+      customBid: customOffer,
     });
   };
 
@@ -147,7 +147,7 @@ export default function Home() {
           >
             Current Price:{" "}
             <span className="font-bold not-italic">
-              ${maxBid !== undefined ? maxBid.toLocaleString() : "XX,XXX"}
+              ${maxOffer !== undefined ? maxOffer.toLocaleString() : "XX,XXX"}
             </span>
           </p>
           <p
@@ -163,14 +163,14 @@ export default function Home() {
           <p
             className={`text-sm ${isDayMode ? "text-blue-900/80" : "text-white/80"}`}
           >
-            At midnight (ET) on Jan&nbsp;1, o3.pro will go to the highest bidder
-            or the first to pay 100k.
+            At midnight (ET) on Jan&nbsp;1, o3.pro will go to the highest offer
+            or the first to exceed $100k.
           </p>
         </div>
 
         {/* Right Column (Form) */}
         <div className="flex flex-col items-start justify-start gap-4">
-          {!hasBid ? (
+          {!hasOffer ? (
             <form
               onSubmit={handleSubmit}
               className={`flex w-full max-w-md flex-col gap-6 rounded-2xl border p-8 shadow-2xl backdrop-blur-xl transition-all ${
@@ -247,19 +247,19 @@ export default function Home() {
                 />
               </div>
 
-              {/* Bid Options - fancier radio buttons */}
+              {/* Offer Options - fancier radio buttons */}
               <div className="flex flex-col gap-2">
                 <span
                   className={`text-sm font-semibold tracking-wide ${
                     isDayMode ? "text-blue-900" : "text-gray-300"
                   }`}
                 >
-                  Bid Options
+                  Offer Options
                 </span>
                 <div className="flex items-center gap-2">
                   <label
                     className={`cursor-pointer rounded-full border-2 px-3 py-1 transition-colors ${
-                      bidOption === "5%"
+                      offerOption === "5%"
                         ? isDayMode
                           ? "border-blue-600 bg-blue-100 text-blue-800"
                           : "border-blue-400 bg-blue-400/10 text-blue-300"
@@ -270,18 +270,18 @@ export default function Home() {
                   >
                     <input
                       type="radio"
-                      name="bid"
+                      name="offer"
                       value="5%"
                       className="hidden"
-                      checked={bidOption === "5%"}
-                      onChange={(e) => setBidOption(e.target.value)}
+                      checked={offerOption === "5%"}
+                      onChange={(e) => setOfferOption(e.target.value)}
                     />
                     5% more
                   </label>
 
                   <label
                     className={`cursor-pointer rounded-full border-2 px-3 py-1 transition-colors ${
-                      bidOption === "10%"
+                      offerOption === "10%"
                         ? isDayMode
                           ? "border-blue-600 bg-blue-100 text-blue-800"
                           : "border-blue-400 bg-blue-400/10 text-blue-300"
@@ -292,17 +292,17 @@ export default function Home() {
                   >
                     <input
                       type="radio"
-                      name="bid"
+                      name="offer"
                       value="10%"
                       className="hidden"
-                      checked={bidOption === "10%"}
-                      onChange={(e) => setBidOption(e.target.value)}
+                      checked={offerOption === "10%"}
+                      onChange={(e) => setOfferOption(e.target.value)}
                     />
                     10% more
                   </label>
                   <label
                     className={`cursor-pointer rounded-full border-2 px-3 py-1 transition-colors ${
-                      bidOption === "custom"
+                      offerOption === "custom"
                         ? isDayMode
                           ? "border-blue-600 bg-blue-100 text-blue-800"
                           : "border-blue-400 bg-blue-400/10 text-blue-300"
@@ -313,22 +313,22 @@ export default function Home() {
                   >
                     <input
                       type="radio"
-                      name="bid"
+                      name="offer"
                       value="custom"
                       className="hidden"
-                      checked={bidOption === "custom"}
-                      onChange={(e) => setBidOption(e.target.value)}
+                      checked={offerOption === "custom"}
+                      onChange={(e) => setOfferOption(e.target.value)}
                     />
                     Custom
                   </label>
                 </div>
 
-                {bidOption === "custom" && (
+                {offerOption === "custom" && (
                   <input
                     type="number"
                     placeholder="Enter custom amount"
-                    value={customBid}
-                    onChange={(e) => setCustomBid(e.target.value)}
+                    value={customOffer}
+                    onChange={(e) => setCustomOffer(e.target.value)}
                     className={`mt-2 w-full rounded-lg border px-4 py-2.5 transition duration-200 focus:outline-none focus:ring-0 ${
                       isDayMode
                         ? "border-black/10 bg-white/50 text-blue-900 placeholder-blue-900/50 focus:border-blue-500/20 focus:bg-white/60"
@@ -357,14 +357,14 @@ export default function Home() {
               <p
                 className={`text-lg font-semibold ${isDayMode ? "text-blue-900" : "text-white"}`}
               >
-                Thank you, {formData.name}! You’ve placed a bid:
+                Thank you, {formData.name}! You've placed an offer:
               </p>
               <p
                 className={`mt-1 text-base font-light ${isDayMode ? "text-blue-900" : "text-white"}`}
               >
-                {bidOption === "custom"
-                  ? `Custom amount: $${customBid}`
-                  : `Bid ${bidOption} more`}
+                {offerOption === "custom"
+                  ? `Custom amount: $${customOffer}`
+                  : `Offer ${offerOption} more`}
               </p>
               {usage && !isEditingUsage && (
                 <p
